@@ -45,6 +45,10 @@ module.exports = function(grunt) {
         files: ['test/spec/{,*/}*.{coffee,litcoffee,coffee.md}'],
         tasks: ['newer:coffee:test', 'karma']
       },
+      compass: {
+        files: ['<%= yo.app %>/styles/{,*/}*.{scss,sass}'],
+        tasks: ['compass:server', 'autoprefixer']
+      },
       styles: {
         files: ['<%= yo.app %>/styles/{,*/}*.css'],
         tasks: ['newer:copy:styles', 'autoprefixer']
@@ -217,6 +221,35 @@ module.exports = function(grunt) {
       }
     },
 
+        // Compiles Sass to CSS and generates necessary files if requested
+    compass: {
+      options: {
+        sassDir: '<%= yo.app %>/styles',
+        cssDir: '.tmp/styles',
+        generatedImagesDir: '.tmp/images/generated',
+        imagesDir: '<%= yo.app %>/images',
+        javascriptsDir: '<%= yo.app %>/scripts',
+        fontsDir: '<%= yo.app %>/styles/fonts',
+        importPath: './bower_components',
+        httpImagesPath: '/images',
+        httpGeneratedImagesPath: '/images/generated',
+        httpFontsPath: '/styles/fonts',
+        relativeAssets: false,
+        assetCacheBuster: false,
+        raw: 'Sass::Script::Number.precision = 10\n'
+      },
+      dist: {
+        options: {
+          generatedImagesDir: '<%= yo.dist %>/images/generated'
+        }
+      },
+      server: {
+        options: {
+          debugInfo: true
+        }
+      }
+    },
+
 
     // Renames files for browser caching purposes
     rev: {
@@ -360,15 +393,18 @@ module.exports = function(grunt) {
     concurrent: {
       server: [
         'coffee:dist',
-        'copy:styles'
+        // 'copy:styles'
+        'compass:server'
       ],
       test: [
         'coffee',
-        'copy:styles'
+        // 'copy:styles'
+        'compass'
       ],
       dist: [
         'coffee',
-        'copy:styles',
+        // 'copy:styles',
+        'compass:dist'
         'imagemin',
         'svgmin'
       ]
