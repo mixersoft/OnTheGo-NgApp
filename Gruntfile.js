@@ -77,20 +77,45 @@ module.exports = function(grunt) {
       livereload: {
         options: {
           open: true,
-          base: [
-            '.tmp',
-            '<%= yo.app %>'
-          ]
+          middleware: function (connect) {
+            return [
+              connect.static('.tmp'),
+              connect.static('test'),
+              connect().use(
+                '/bower_components',
+                connect.static('./bower_components')
+              ),
+              connect.static(require('./bower.json').appPath || 'app')
+            ];
+          }
+          // base: [
+          //   '.tmp',
+          //   'bower_components',
+          //   '<%= yo.app %>'
+          // ]
         }
       },
       test: {
         options: {
           port: 9001,
-          base: [
-            '.tmp',
-            'test',
-            '<%= yo.app %>'
-          ]
+          // keepalive: true,
+          middleware: function (connect) {
+            return [
+              connect.static('.tmp'),
+              connect.static('test'),
+              connect().use(
+                '/bower_components',
+                connect.static('./bower_components')
+              ),
+              connect.static(require('./bower.json').appPath || 'app')
+            ];
+          }
+          // base: [
+          //   '.tmp',
+          //   'test',
+          //   'bower_components',
+          //   '<%= yo.app %>'
+          // ]
         }
       },
       dist: {
@@ -141,14 +166,31 @@ module.exports = function(grunt) {
       }
     },
 
-    // Automatically inject Bower components into the app
-    bowerInstall: {
+    // Use wiredep instead of bowerInstall Automatically inject Bower components into the app
+    wiredep: {
       app: {
-        src: '<%= yo.app %>/index.html',
-        ignorePath: '<%= yo.app %>/',
-        exclude: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.js']
+        src: ['<%= yo.app %>/index.html'],
+        ignorePath: new RegExp('^<%= yo.app %>/|../')
+      },
+      sass: {
+        src: ['<%= yo.app %>/styles/{,*/}*.{scss,sass}'],
+        ignorePath: /(\.\.\/){1,2}bower_components\//
       }
-    },
+    }, 
+
+
+
+    // Automatically inject Bower components into the app
+    // bowerInstall: {
+    //   app: {
+    //     src: '<%= yo.app %>/index.html',
+    //     ignorePath: '<%= yo.app %>/',
+    //     exclude: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.js']
+    //   }
+    // },
+
+
+
     // Compiles CoffeeScript to JavaScript
     coffee: {
       options: {
@@ -354,7 +396,8 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'clean:server',
-      'bowerInstall',
+      // 'bowerInstall',
+      'wiredep',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
@@ -377,7 +420,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'bowerInstall',
+    // 'bowerInstall',
+    'wiredep',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
@@ -388,8 +432,8 @@ module.exports = function(grunt) {
     'cssmin',
     'uglify',
     'rev',
-    'usemin',
-    'htmlmin'
+    'usemin'
+    // 'htmlmin'
   ]);
 
   grunt.registerTask('default', [

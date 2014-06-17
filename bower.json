@@ -1,20 +1,20 @@
 {
-  "name": "On-The-Go",
+  "name": "project",
   "version": "0.1.0",
   "description": "Yet another amazing AngularJS app",
   "keywords": [
     "angular"
   ],
-  "homepage": "https://github.com/null/-on-the-go",
-  "bugs": "https://github.com/null/-on-the-go/issues",
+  "homepage": "https://github.com/gituser/project",
+  "bugs": "https://github.com/gituser/project/issues",
   "author": {
     "name": "",
     "email": "",
-    "url": "https://github.com/null"
+    "url": "https://github.com/gituser"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/null/-on-the-go.git"
+    "url": "https://github.com/gituser/project.git"
   },
   "licenses": [
     {
@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "bootstrap": "3.1.1",
-    "font-awesome": "4.1.0,4.0.3",
+    "font-awesome": "4.1.0",
     "angular-strap": "2.0.3",
     "angular-motion": "0.3.2",
     "bootstrap-additions": "0.2.2",
